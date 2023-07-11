@@ -4,7 +4,6 @@ from requests import session
 from database import session, Message
 import pika
 
-
 # Conectar a RabbitMQ
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))
@@ -19,7 +18,8 @@ class ChatServer:
         self.server.listen()
         self.server = None
         self.clients = []
-
+        self.rooms = {}  
+        
     async def start(self):
         self.server = await asyncio.start_server(
             self.handle_client, self.host, self.port)
@@ -29,10 +29,23 @@ class ChatServer:
 
     async def handle_client(self, reader, writer):
         self.clients.append(writer)
+        room_name = None
 
         while True:
             data = await reader.read(100)
             message = data.decode().strip()
+
+            if message.startswith("CREATE "):
+                room_name = message.split(" ", 1)[1]
+                if room_name not in self.rooms:
+                    self.rooms[room_name] = []
+                self.rooms[room_name].append(writer)
+                continue
+            elif message.startswith("JOIN "):
+                room_name = message.split(" ", 1)[1]
+                if room_name in self.rooms:
+                    self.rooms[room_name].append(writer)
+                continue
 
             if message == "QUIT":
                 break
@@ -46,16 +59,23 @@ class ChatServer:
                                    body=message)
 
             # Guardar el mensaje en la base de datos
-            new_message = Message(username=username, message=message)
+            new_message = Message(username=username, message=message, room_name=room_name)
             session.add(new_message)
             session.commit()
-            
+
+            # Enviar el mensaje a todos los clientes en la sala de este cliente
+            if room_name is not None:
+                for client in self.rooms[room_name]:
+                    client.write(f'({room_name}) {message}'.encode())  # Agregar el nombre de la sala al mensaje
+
             # Enviar el mensaje a todos los clientes conectados
             for client in self.clients:
                 client.write(message.encode())
 
         writer.close()
         self.clients.remove(writer)
+        if room_name is not None:
+            self.rooms[room_name].remove(writer)
 
 if __name__ == "__main__":
     chat_server = ChatServer()
