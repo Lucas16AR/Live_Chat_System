@@ -1,19 +1,18 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-import datetime
+from sqlalchemy import func
 
-engine = create_engine('sqlite:///chat.db', echo=True)
 Base = declarative_base()
 
 class Message(Base):
     __tablename__ = 'messages'
-
     id = Column(Integer, primary_key=True)
-    username = Column(String)
-    message = Column(String)
-    timestamp = Column(DateTime, default=datetime.datetime.utcnow)
+    username = Column(String (100))
+    message = Column(String (100))
+    timestamp = Column(DateTime, default=func.now())
 
+engine = create_engine('sqlite:///database.db', echo=True)
 Base.metadata.create_all(bind=engine)
 
 Session = sessionmaker(bind=engine)

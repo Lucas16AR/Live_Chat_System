@@ -1,41 +1,9 @@
 import asyncio
 import socket
 from requests import session
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import func
+from database import session, Message
 import pika
 
-# Definir el modelo de la base de datos
-Base = declarative_base()
-
-class Message(Base):
-    __tablename__ = 'messages'
-    id = Column(Integer, primary_key=True)
-    username = Column(String (100))
-    message = Column(String (100))
-    timestamp = Column(DateTime, default=func.now())
-
-# Conectar a la base de datos
-engine = create_engine('sqlite:///database.db', echo=True)
-Base.metadata.create_all(bind=engine)
-
-# Crear una sesión de la base de datos
-Session = sessionmaker(bind=engine)
-session = Session()
-
-#def save_message(username, message, timestamp):
-#    try:
-#        new_message = Message(username=username, message=message, timestamp=timestamp)
-#        session.add(new_message)
-#        session.commit()
-#    except Exception as e:
-#        print(f"Error saving message: {e}")
-#
-#def get_all_messages():
-#    message = session.query(Message).all()
-#    return message
 
 # Conectar a RabbitMQ
 connection = pika.BlockingConnection(
@@ -48,7 +16,6 @@ class ChatServer:
         self.host = host
         self.port = port
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #self.server.bind((self.host, self.port))
         self.server.listen()
         self.server = None
         self.clients = []
