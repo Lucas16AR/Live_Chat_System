@@ -1,0 +1,27 @@
+@startuml Live_Chat_System
+
+package "Cliente" {
+  [Cliente 1]
+  [Cliente 2]
+  [Cliente 3]
+}
+
+package "Servidor" {
+  [Server]
+}
+
+package "Base de Datos" {
+  [SQLite]
+}
+
+package "Frontend" {
+  [Interfaz de Usuario]
+}
+
+[Cliente 1] --> [Servidor]
+[Cliente 2] --> [Servidor]
+[Cliente 3] --> [Servidor]
+[Servidor] --> [SQLite]
+[Servidor] --> [Interfaz de Usuario]
+
+@enduml
