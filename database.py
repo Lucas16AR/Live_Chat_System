@@ -20,9 +20,10 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 def save_message(username, message, room_name):
-    new_message = Message(username=username, message=message, room_name=room_name)
-    session.add(new_message)
-    session.commit()
+    if message.strip().upper() != 'QUIT':
+        new_message = Message(username=username, message=message, room_name=room_name)
+        session.add(new_message)
+        session.commit()
 
 def get_all_messages():
     messages = session.query(Message).all()

@@ -3,6 +3,7 @@ import socket
 from requests import session
 from database import session, Message
 import pika
+import clear
 
 # Conectar a RabbitMQ
 connection = pika.BlockingConnection(
@@ -18,9 +19,11 @@ class ChatServer:
         self.server.listen()
         self.server = None
         self.clients = []
-        self.rooms = {}  
+        self.rooms = {}
+        self.current_room = None
         
     async def start(self):
+        clear.clear()
         self.server = await asyncio.start_server(
             self.handle_client, self.host, self.port)
 
@@ -34,19 +37,25 @@ class ChatServer:
         while True:
             data = await reader.read(100)
             message = data.decode().strip()
+            print(f'Received message: {message} ')
 
             if message.startswith("CREATE "):
                 room_name = message.split(" ", 1)[1]
                 if room_name not in self.rooms:
                     self.rooms[room_name] = []
                 self.rooms[room_name].append(writer)
+                self.current_room = room_name
+                writer.write(f'Success: Created room {room_name}\n'.encode())
+                await writer.drain()
                 continue
             elif message.startswith("JOIN "):
                 room_name = message.split(" ", 1)[1]
                 if room_name in self.rooms:
                     self.rooms[room_name].append(writer)
+                    self.current_room = room_name
+                    writer.write(f'Success: Joined room {room_name}\n'.encode())
+                    await writer.drain()
                 continue
-
             if message == "QUIT":
                 break
 
@@ -66,11 +75,14 @@ class ChatServer:
             # Enviar el mensaje a todos los clientes en la sala de este cliente
             if room_name is not None:
                 for client in self.rooms[room_name]:
-                    client.write(f'({room_name}) {message}'.encode())  # Agregar el nombre de la sala al mensaje
+                    client.write(f'({room_name}) {username}: {message}'.encode())  # Agregar el nombre de la sala al mensaje
+                    await client.drain()  # Asegurarte de que el mensaje se envíe
 
-            # Enviar el mensaje a todos los clientes conectados
-            for client in self.clients:
-                client.write(message.encode())
+            # Escribir los detalles del mensaje en el archivo
+            with open('chat_logs.txt', 'a') as f:
+                f.write(f'Alias: {username}, Room: {room_name}, Message: {message}\n')
+                f.write('--------------------\n')
+                continue
 
         writer.close()
         self.clients.remove(writer)
