@@ -43,3 +43,15 @@ Alias: gaspi, Room: um, Message: nos vemos che
 --------------------
 Alias: gaspi, Room: um, Message: QUIT
 --------------------
+Alias: gaspi, Room: olo, Message: hola pai
+--------------------
+Alias: lucas, Room: olo, Message: que haces perri todo bien
+--------------------
+Alias: gaspi, Room: olo, Message: bien loco, tratando de mejorar del resfrio
+--------------------
+Alias: lucas, Room: olo, Message: bueno che, me alegro
+--------------------
+Alias: lucas, Room: olo, Message: cuidate loco
+--------------------
+Alias: lucas, Room: olo, Message: QUIT
+--------------------

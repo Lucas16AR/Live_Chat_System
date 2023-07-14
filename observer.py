@@ -9,8 +9,8 @@ class FileChangeHandler(FileSystemEventHandler):
         with open('chat_logs.txt', 'r') as f:
             lines = f.readlines()
             print(lines[-1])  # Imprimir el último mensaje
-            #with open('realtime_logs.txt', 'a') as f2:
-            #    f2.write(lines[-1])  # Escribir el último mensaje en otro archivo
+            with open('realtime_logs.txt', 'a') as f2:
+                f2.write(lines[-1])  # Escribir el último mensaje en otro archivo
 
 if __name__ == "__main__":
     event_handler = FileChangeHandler()
