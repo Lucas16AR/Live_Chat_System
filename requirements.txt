@@ -1,8 +1,0 @@
-Flask
-python-dotenv
-flask-restful
-flask_sqlalchemy<2.0
-pika
-rabbitmq
-aioconsole
-watchdog
