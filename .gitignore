@@ -16,3 +16,4 @@ venv.bak/
 pyvenv.cfg
 .env
 requirements.txt
+backend/realtimepythonchat_env
