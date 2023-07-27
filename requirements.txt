@@ -1,0 +1,6 @@
+clear
+flask 
+flask-socketio
+sqlalchemy
+flask-sqlalchemy
+simple-websocket
