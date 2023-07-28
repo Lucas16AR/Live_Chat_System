@@ -40,11 +40,18 @@ pip3 install -r requirements.txt
 ```
 
 # 🚀 Usage
+Fist you need to go to the file directory
+
+```bash
+cd files
+```
+
 To start the server you just need to run the file server.py.
 
 ```bash
 python3 server.py
 ```
+
 To start the client you just need to run the file client.py.
 
 ```bash
