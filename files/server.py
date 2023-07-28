@@ -1,13 +1,14 @@
+import clear
+import socketio
 from flask import Flask
-from flask_socketio import SocketIO, join_room, leave_room, disconnect
+from flask_socketio import SocketIO, join_room, leave_room, disconnect, send
 from models import db_session, Message
 from models import Base, engine
-from flask_socketio import SocketIO, join_room
 from datetime import datetime
 import sqlite3
-import clear
 
 Base.metadata.create_all(bind=engine)
+room = 'common_room'
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -20,15 +21,16 @@ def shutdown_session(exception=None):
 @socketio.on('join', namespace='/chat')
 def join(data):
     username = data['username']
-    room = data['room']
     join_room(room)
     print(f'{username} se ha unido a la sala {room}')
+    socketio.emit('message', {'username': username, 'message': username + ' ha ingresado a la sala.'}, room=room)  
 
 @socketio.on('message', namespace='/chat')
 def chat_message(data):
     username = data['username']
-    room = data['room']
     message = data['message']
+    socketio.emit('message', {'username': username, 'message': message}, room=room)
+    print(f'Recibido mensaje de {username} en la sala {room}: {message}')
 
     if message == 'QUIT':
         leave_room(room)
@@ -44,6 +46,7 @@ def chat_message(data):
 
 @socketio.on('message')
 def handle_message(data):
+    send({'username': data['username'], 'message': data['message']}, room=data['room'])
     username = data['username']
     message = data['message']
     room = data['room']

@@ -15,4 +15,4 @@ venv.bak/
 /share
 pyvenv.cfg
 .env
-backend/realtimepythonchat_env
+realtimepythonchat_env

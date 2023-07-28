@@ -4,3 +4,4 @@ flask-socketio
 sqlalchemy
 flask-sqlalchemy
 simple-websocket
+requests

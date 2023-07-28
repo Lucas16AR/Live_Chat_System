@@ -1,32 +1,32 @@
+import clear
 import socketio
 import threading
-import clear
 
 sio = socketio.Client()
 
 username = None
-room = None
-clear.clear()
+room = 'common_room'
 
 @sio.event
 def connect():
-    global username, room
+    clear.clear()
+    global username
     print('Conexión establecida')
     username = input('Escriba su nombre de usuario: ')
-    room = input('Escribe el nombre de la sala a la cual quieres ingresar o crear: ')
     print(f'Se ha unido a la sala: {room}')
-    sio.emit('join', {'username': username, 'room': room})
+    sio.emit('join', {'username': username})
 
 @sio.event
-def message(data):
-    print('Mensaje recibido: ', data)
+def messages(data):
+    print(f'{data["username"]}: {data["message"]}')
+    print('Se activó el evento \'message\' en el cliente.')
 
 @sio.event
 def disconnect():
     print('Desconectado del servidor')
 
 def send_message():
-    global username, room
+    global username
     while True:
         message = input('Escribe tu mensaje: ')
         if message == 'QUIT':
@@ -36,7 +36,7 @@ def send_message():
         elif message == 'EXIT':
             sio.disconnect()
             print('Te has desconectado del servidor.')
-            break
+            exit()
         else:
             sio.emit('message', {'username': username, 'message': message, 'room': room})
 
