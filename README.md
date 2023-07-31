@@ -58,6 +58,12 @@ To start the client you just need to run the file client.py.
 python3 client.py
 ```
 
+To start the chat you just need to run the file server.py.
+
+```bash
+python3 messages.py
+```
+
 ## 👨‍🔧 Client actions
 Once the connection to the server is established, the client will be able to perform different actions, these are:
 

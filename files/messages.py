@@ -1,5 +1,8 @@
 import sqlite3
 import time
+import clear
+
+clear.clear()
 
 def display_messages():
     conn = sqlite3.connect('chat.db')
