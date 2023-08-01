@@ -67,7 +67,7 @@ python3 messages.py
 ## 👨‍🔧 Client actions
 Once the connection to the server is established, the client will be able to perform different actions, these are:
 
-- Create a room
+- Enter to a room
 - Chat with other people
 - Exit
 
